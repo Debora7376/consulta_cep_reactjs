@@ -3,32 +3,30 @@ import api from './api';
 
 class App extends Component {
 
-  state = {
-    endereco: {},
+  constructor(props) {
+    super(props);
+    this.state = {cep:"", endereco:{}}
+  }
+  pesquisarCep = (e) => {
+    console.log("fui clicado" + this.state.cep);
+    e.preventDefault();
+    api.get(this.state.cep + "/json").then(data => this.setState({endereco: data.data}));
   }
 
-  async componentDidMount() {
-    const response = await api.get('25036210/json/');
-    console.log(response);
-    this.setState({ endereco: response.data });
+  salvaCep = (e) => {
+    console.log("foi digitado");
+    this.setState({cep: e.target.value});
   }
 
   render() {
-
     const { endereco } = this.state;
 
     return (
       <div className="App">
         <form>
-          <label>
-            CEP:
-              <input type="text" name="cep" />
-            <button>
-              Pesquisar
-              </button>
-          </label>
+          <input type="text" value={this.state.cep} onChange={this.salvaCep}></input>
+          <button onClick={this.pesquisarCep}>Pesquisar</button>
         </form>
-
         <div>
           <ul>
             <li>Cep: {endereco.cep}</li>
@@ -42,7 +40,6 @@ class App extends Component {
             <li>DDD: {endereco.ddd}</li>
             <li>Siafi: {endereco.siafi}</li>
           </ul>
-          
         </div>
       </div>
     );
